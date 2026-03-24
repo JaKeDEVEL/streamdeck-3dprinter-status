@@ -18,9 +18,9 @@ type PrinterSettings = JsonObject & {
 };
 
 const DEFAULT_SETTINGS: PrinterSettings = {
-	printerHost: "192.168.2.54",
+	printerHost: "",
 	printerPort: 7125,
-	printerName: "Sovol SV06",
+	printerName: "My Printer",
 	pollInterval: 5,
 };
 
