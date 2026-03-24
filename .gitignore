@@ -1,0 +1,8 @@
+node_modules/
+com.janoskehl.printer-status.sdPlugin/bin/
+com.janoskehl.printer-status.sdPlugin/logs/
+*.js.map
+*.d.ts
+*.d.ts.map
+.DS_Store
+.claude/

@@ -1,0 +1,23 @@
+{
+	"name": "com.janoskehl.printer-status",
+	"version": "1.0.0",
+	"description": "Stream Deck plugin for monitoring and controlling Klipper 3D printers via Moonraker",
+	"main": "src/plugin.ts",
+	"type": "module",
+	"scripts": {
+		"build": "rollup -c",
+		"watch": "rollup -c -w --watch.onEnd=\"streamdeck restart com.janoskehl.printer-status\""
+	},
+	"dependencies": {
+		"@elgato/streamdeck": "^1.2.0"
+	},
+	"devDependencies": {
+		"@elgato/cli": "^1.1.0",
+		"@rollup/plugin-commonjs": "^29.0.2",
+		"@rollup/plugin-node-resolve": "^16.0.0",
+		"@rollup/plugin-typescript": "^12.1.0",
+		"rollup": "^4.29.0",
+		"tslib": "^2.8.0",
+		"typescript": "^5.7.0"
+	}
+}

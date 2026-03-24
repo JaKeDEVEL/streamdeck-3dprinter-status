@@ -1,0 +1,59 @@
+{
+	"UUID": "com.janoskehl.printer-status",
+	"Name": "3D Printer Status",
+	"Version": "1.0.0",
+	"Author": "Janos Kehl",
+	"Description": "Monitor and control Klipper 3D printers via Moonraker API",
+	"Category": "3D Printing",
+	"Icon": "imgs/plugin/icon",
+	"CategoryIcon": "imgs/plugin/category-icon",
+	"CodePath": "bin/plugin.js",
+	"OS": [
+		{
+			"Platform": "mac",
+			"MinimumVersion": "10.15"
+		},
+		{
+			"Platform": "windows",
+			"MinimumVersion": "10"
+		}
+	],
+	"Software": {
+		"MinimumVersion": "6.9"
+	},
+	"SDKVersion": 2,
+	"Nodejs": {
+		"Version": "20"
+	},
+	"Actions": [
+		{
+			"Name": "Printer Control",
+			"UUID": "com.janoskehl.printer-status.control",
+			"Icon": "imgs/actions/printer-status/icon",
+			"Tooltip": "Shows printer status. Press to pause/resume print.",
+			"Controllers": ["Keypad"],
+			"PropertyInspectorPath": "ui/printer-settings.html",
+			"States": [
+				{
+					"Image": "imgs/actions/printer-status/key",
+					"TitleAlignment": "bottom",
+					"FontSize": "10"
+				}
+			]
+		},
+		{
+			"Name": "Print Progress",
+			"UUID": "com.janoskehl.printer-status.progress",
+			"Icon": "imgs/actions/printer-status/icon",
+			"Tooltip": "Shows print progress as circular gauge.",
+			"Controllers": ["Keypad"],
+			"PropertyInspectorPath": "ui/printer-settings.html",
+			"States": [
+				{
+					"Image": "imgs/actions/printer-status/key",
+					"TitleAlignment": "none"
+				}
+			]
+		}
+	]
+}
