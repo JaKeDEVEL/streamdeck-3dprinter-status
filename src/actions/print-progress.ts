@@ -139,8 +139,8 @@ function getRingColor(state: PrinterState["state"]): string {
 
 function getStatusLabel(state: PrinterState["state"]): string {
 	switch (state) {
-		case "ready": return "Bereit";
-		case "error": return "Fehler";
+		case "ready": return "Ready";
+		case "error": return "Error";
 		case "offline": return "Offline";
 		default: return "";
 	}

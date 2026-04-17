@@ -136,10 +136,10 @@ function renderControlImage(state: PrinterState, name: string): string {
 
 function getStatusLabel(state: PrinterState["state"]): string {
 	switch (state) {
-		case "printing": return "Druckt";
-		case "paused": return "Pausiert";
-		case "ready": return "Bereit";
-		case "error": return "Fehler";
+		case "printing": return "Printing";
+		case "paused": return "Paused";
+		case "ready": return "Ready";
+		case "error": return "Error";
 		case "offline": return "Offline";
 	}
 }

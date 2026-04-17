@@ -54,6 +54,48 @@
 					"TitleAlignment": "none"
 				}
 			]
+		},
+		{
+			"Name": "CPU + RAM",
+			"UUID": "com.janoskehl.printer-status.cpu-ram",
+			"Icon": "imgs/actions/printer-status/icon",
+			"Tooltip": "Shows CPU temperature, CPU usage and RAM usage.",
+			"Controllers": ["Keypad"],
+			"PropertyInspectorPath": "ui/printer-settings.html",
+			"States": [
+				{
+					"Image": "imgs/actions/printer-status/key",
+					"TitleAlignment": "none"
+				}
+			]
+		},
+		{
+			"Name": "Driver Temperatures",
+			"UUID": "com.janoskehl.printer-status.drivers",
+			"Icon": "imgs/actions/printer-status/icon",
+			"Tooltip": "Shows stepper driver temperatures (TMC2240/TMC2209).",
+			"Controllers": ["Keypad"],
+			"PropertyInspectorPath": "ui/printer-settings.html",
+			"States": [
+				{
+					"Image": "imgs/actions/printer-status/key",
+					"TitleAlignment": "none"
+				}
+			]
+		},
+		{
+			"Name": "Chamber Temperature",
+			"UUID": "com.janoskehl.printer-status.cavity",
+			"Icon": "imgs/actions/printer-status/icon",
+			"Tooltip": "Shows chamber/cavity temperature with min and max values.",
+			"Controllers": ["Keypad"],
+			"PropertyInspectorPath": "ui/printer-settings.html",
+			"States": [
+				{
+					"Image": "imgs/actions/printer-status/key",
+					"TitleAlignment": "none"
+				}
+			]
 		}
 	]
 }

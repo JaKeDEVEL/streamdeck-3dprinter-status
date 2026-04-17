@@ -1,10 +1,17 @@
-import { MoonrakerClient, type PrinterState } from "./moonraker";
+import { MoonrakerClient, type PrinterState, type SystemStats } from "./moonraker";
 
 interface PrinterEntry {
 	client: MoonrakerClient;
 	state: PrinterState;
 	interval: ReturnType<typeof setInterval>;
 	listeners: Set<(state: PrinterState) => void>;
+}
+
+interface SystemStatsEntry {
+	client: MoonrakerClient;
+	stats: SystemStats;
+	interval: ReturnType<typeof setInterval>;
+	listeners: Set<(stats: SystemStats) => void>;
 }
 
 /**
@@ -66,4 +73,52 @@ export function subscribePrinter(
 
 export function getPrinterClient(host: string, port: number): MoonrakerClient | undefined {
 	return printers.get(printerKey(host, port))?.client;
+}
+
+// ---------------------------------------------------------------------------
+// System stats subscriptions (CPU, RAM, driver temps)
+// ---------------------------------------------------------------------------
+
+const systemStatsPollers = new Map<string, SystemStatsEntry>();
+
+export function subscribeSystemStats(
+	host: string,
+	port: number,
+	pollInterval: number,
+	listener: (stats: SystemStats) => void
+): () => void {
+	const key = printerKey(host, port);
+	let entry = systemStatsPollers.get(key);
+
+	if (!entry) {
+		const client = new MoonrakerClient(host, port);
+		const stats: SystemStats = {
+			cpuTemp: null, cpuUsage: 0, ramUsedMb: 0, ramTotalMb: 0,
+			driverTemps: [], cavityTemp: null, cavityMinTemp: null, cavityMaxTemp: null,
+		};
+
+		const update = async () => {
+			const newStats = await client.getSystemStats();
+			entry!.stats = newStats;
+			entry!.listeners.forEach((cb) => cb(newStats));
+		};
+
+		const interval = setInterval(update, pollInterval * 1000);
+		entry = { client, stats, interval, listeners: new Set() };
+		systemStatsPollers.set(key, entry);
+
+		update();
+	}
+
+	entry.listeners.add(listener);
+
+	return () => {
+		const e = systemStatsPollers.get(key);
+		if (!e) return;
+		e.listeners.delete(listener);
+		if (e.listeners.size === 0) {
+			clearInterval(e.interval);
+			systemStatsPollers.delete(key);
+		}
+	};
 }
