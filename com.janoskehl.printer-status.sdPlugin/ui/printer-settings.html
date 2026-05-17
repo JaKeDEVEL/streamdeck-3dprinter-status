@@ -6,6 +6,13 @@
 	<script src="https://sdpi-components.dev/releases/v3/sdpi-components.js"></script>
 </head>
 <body>
+	<sdpi-item label="Printer Type">
+		<sdpi-select setting="printerType">
+			<option value="moonraker">Moonraker (Klipper)</option>
+			<option value="prusalink">PrusaLink (Prusa)</option>
+		</sdpi-select>
+	</sdpi-item>
+
 	<sdpi-item label="Printer IP">
 		<sdpi-textfield setting="printerHost" placeholder="e.g. 192.168.1.100"></sdpi-textfield>
 	</sdpi-item>
@@ -13,9 +20,20 @@
 	<sdpi-item label="Port">
 		<sdpi-textfield setting="printerPort" placeholder="7125"></sdpi-textfield>
 	</sdpi-item>
+	<sdpi-item label="">
+		<p style="margin:0; font-size:11px; color:#888;">Moonraker: 7125 &nbsp;|&nbsp; PrusaLink: 80</p>
+	</sdpi-item>
 
 	<sdpi-item label="Printer Name">
 		<sdpi-textfield setting="printerName" placeholder="My Printer"></sdpi-textfield>
+	</sdpi-item>
+
+	<sdpi-item label="Username (PrusaLink)">
+		<sdpi-textfield setting="printerUsername" placeholder="maker"></sdpi-textfield>
+	</sdpi-item>
+
+	<sdpi-item label="Password (PrusaLink)">
+		<sdpi-textfield setting="printerPassword" placeholder=""></sdpi-textfield>
 	</sdpi-item>
 
 	<sdpi-item label="Poll Interval (s)">

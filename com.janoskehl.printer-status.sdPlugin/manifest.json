@@ -84,6 +84,34 @@
 			]
 		},
 		{
+			"Name": "Nozzle Temperature",
+			"UUID": "com.janoskehl.printer-status.nozzle-temp",
+			"Icon": "imgs/actions/printer-status/icon",
+			"Tooltip": "Shows nozzle temperature, target and heating status.",
+			"Controllers": ["Keypad"],
+			"PropertyInspectorPath": "ui/printer-settings.html",
+			"States": [
+				{
+					"Image": "imgs/actions/printer-status/key",
+					"TitleAlignment": "none"
+				}
+			]
+		},
+		{
+			"Name": "Bed Temperature",
+			"UUID": "com.janoskehl.printer-status.bed-temp",
+			"Icon": "imgs/actions/printer-status/icon",
+			"Tooltip": "Shows bed temperature, target and heating status.",
+			"Controllers": ["Keypad"],
+			"PropertyInspectorPath": "ui/printer-settings.html",
+			"States": [
+				{
+					"Image": "imgs/actions/printer-status/key",
+					"TitleAlignment": "none"
+				}
+			]
+		},
+		{
 			"Name": "Chamber Temperature",
 			"UUID": "com.janoskehl.printer-status.cavity",
 			"Icon": "imgs/actions/printer-status/icon",

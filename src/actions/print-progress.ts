@@ -7,13 +7,16 @@ import streamDeck, {
 	type DidReceiveSettingsEvent,
 } from "@elgato/streamdeck";
 import type { PrinterState } from "../moonraker";
-import { subscribePrinter } from "../printer-manager";
+import { subscribeMoonraker, subscribePrusaLink } from "../printer-manager";
 
 type PrinterSettings = JsonObject & {
 	printerHost: string;
 	printerPort: number;
 	printerName: string;
 	pollInterval: number;
+	printerType: "moonraker" | "prusalink";
+	printerUsername: string;
+	printerPassword: string;
 };
 
 const DEFAULT_SETTINGS: PrinterSettings = {
@@ -21,6 +24,9 @@ const DEFAULT_SETTINGS: PrinterSettings = {
 	printerPort: 7125,
 	printerName: "My Printer",
 	pollInterval: 5,
+	printerType: "moonraker",
+	printerUsername: "",
+	printerPassword: "",
 };
 
 const unsubMap = new Map<string, () => void>();
@@ -31,43 +37,45 @@ export class PrintProgressAction extends SingletonAction<PrinterSettings> {
 	override async onWillAppear(ev: WillAppearEvent<PrinterSettings>): Promise<void> {
 		const settings = { ...DEFAULT_SETTINGS, ...ev.payload.settings };
 		await ev.action.setSettings(settings);
-		const id = ev.action.id;
-
-		const unsub = subscribePrinter(
-			settings.printerHost,
-			settings.printerPort,
-			settings.pollInterval || 5,
-			(state) => this.renderKey(ev.action, state)
-		);
-		unsubMap.set(id, unsub);
+		this.subscribe(ev.action, settings);
 	}
 
 	override onWillDisappear(ev: WillDisappearEvent<PrinterSettings>): void {
-		const id = ev.action.id;
-		unsubMap.get(id)?.();
-		unsubMap.delete(id);
+		unsubMap.get(ev.action.id)?.();
+		unsubMap.delete(ev.action.id);
 	}
 
 	override async onDidReceiveSettings(ev: DidReceiveSettingsEvent<PrinterSettings>): Promise<void> {
 		const settings = { ...DEFAULT_SETTINGS, ...ev.payload.settings };
-		const id = ev.action.id;
+		unsubMap.get(ev.action.id)?.();
+		this.subscribe(ev.action, settings);
+	}
 
-		unsubMap.get(id)?.();
-		const unsub = subscribePrinter(
-			settings.printerHost,
-			settings.printerPort,
-			settings.pollInterval || 5,
-			(state) => this.renderKey(ev.action, state)
-		);
-		unsubMap.set(id, unsub);
+	private subscribe(
+		actionInstance: WillAppearEvent<PrinterSettings>["action"],
+		settings: PrinterSettings
+	): void {
+		const cb = (state: PrinterState) => this.renderKey(actionInstance, state, settings.printerType);
+		const unsub = settings.printerType === "prusalink"
+			? subscribePrusaLink(
+				settings.printerHost, settings.printerPort,
+				settings.printerUsername, settings.printerPassword,
+				settings.pollInterval || 5, cb
+			)
+			: subscribeMoonraker(
+				settings.printerHost, settings.printerPort,
+				settings.pollInterval || 5, cb
+			);
+		unsubMap.set(actionInstance.id, unsub);
 	}
 
 	private async renderKey(
 		actionInstance: WillAppearEvent<PrinterSettings>["action"],
-		state: PrinterState
+		state: PrinterState,
+		printerType: PrinterSettings["printerType"] = "moonraker"
 	): Promise<void> {
 		try {
-			const svg = renderProgressImage(state);
+			const svg = renderProgressImage(state, printerType);
 			await actionInstance.setImage(`data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`);
 			await actionInstance.setTitle("");
 		} catch (err) {
@@ -76,7 +84,7 @@ export class PrintProgressAction extends SingletonAction<PrinterSettings> {
 	}
 }
 
-function renderProgressImage(state: PrinterState): string {
+function renderProgressImage(state: PrinterState, printerType: PrinterSettings["printerType"] = "moonraker"): string {
 	const isPrinting = state.state === "printing" || state.state === "paused";
 	const progress = isPrinting ? state.progress : 0;
 	const bg = "#000000";
@@ -89,8 +97,8 @@ function renderProgressImage(state: PrinterState): string {
 	const filled = (progress / 100) * circumference;
 	const gap = circumference - filled;
 
-	// Color based on state
-	const ringColor = getRingColor(state.state);
+	// Color based on state (Prusa orange overrides state color)
+	const ringColor = printerType === "prusalink" ? "#FA6831" : getRingColor(state.state);
 	const trackColor = "#333333";
 
 	// ETA text

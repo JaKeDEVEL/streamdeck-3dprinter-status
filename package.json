@@ -16,8 +16,13 @@
 		"@rollup/plugin-commonjs": "^29.0.2",
 		"@rollup/plugin-node-resolve": "^16.0.0",
 		"@rollup/plugin-typescript": "^12.1.0",
+		"@types/node": "^25.8.0",
 		"rollup": "^4.29.0",
 		"tslib": "^2.8.0",
 		"typescript": "^5.7.0"
+	},
+	"overrides": {
+		"fast-uri": "3.1.2",
+		"brace-expansion": "2.1.0"
 	}
 }

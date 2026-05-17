@@ -32,6 +32,14 @@ export interface PrinterState {
 	etaSeconds: number | null;
 	/** Human-readable status message */
 	message: string;
+	/** Nozzle temperature in °C */
+	nozzleTemp: number | null;
+	/** Nozzle target temperature in °C (0 = off) */
+	nozzleTarget: number | null;
+	/** Bed temperature in °C */
+	bedTemp: number | null;
+	/** Bed target temperature in °C (0 = off) */
+	bedTarget: number | null;
 }
 
 export class MoonrakerClient {
@@ -55,6 +63,8 @@ export class MoonrakerClient {
 							virtual_sdcard: ["progress", "file_position", "is_active"],
 							print_stats: ["state", "filename", "total_duration", "print_duration"],
 							display_status: ["progress", "message"],
+							extruder: ["temperature", "target"],
+							heater_bed: ["temperature", "target"],
 						},
 					}),
 				}),
@@ -89,9 +99,16 @@ export class MoonrakerClient {
 				etaSeconds = Math.round((elapsed / progress) * (100 - progress));
 			}
 
+			const extruder  = objects.result?.status?.extruder;
+			const heaterBed = objects.result?.status?.heater_bed;
+			const nozzleTemp:   number | null = extruder?.temperature  ?? null;
+			const nozzleTarget: number | null = extruder?.target       ?? null;
+			const bedTemp:      number | null = heaterBed?.temperature ?? null;
+			const bedTarget:    number | null = heaterBed?.target      ?? null;
+
 			const message = this.formatMessage(state, progress, filename, etaSeconds);
 
-			return { state, progress, filename, etaSeconds, message };
+			return { state, progress, filename, etaSeconds, message, nozzleTemp, nozzleTarget, bedTemp, bedTarget };
 		} catch {
 			return {
 				state: "offline",
@@ -99,6 +116,10 @@ export class MoonrakerClient {
 				filename: null,
 				etaSeconds: null,
 				message: "Offline",
+				nozzleTemp: null,
+				nozzleTarget: null,
+				bedTemp: null,
+				bedTarget: null,
 			};
 		}
 	}
