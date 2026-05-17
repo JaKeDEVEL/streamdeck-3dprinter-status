@@ -36,7 +36,7 @@ export function subscribeMoonraker(
 
 	if (!entry) {
 		const client = new MoonrakerClient(host, port);
-		const state: PrinterState = { state: "offline", progress: 0, filename: null, etaSeconds: null, message: "...", nozzleTemp: null, nozzleTarget: null, bedTemp: null, bedTarget: null };
+		const state: PrinterState = { state: "offline", progress: 0, filename: null, etaSeconds: null, message: "...", nozzleTemp: null, nozzleTarget: null, bedTemp: null, bedTarget: null, activeExtruderIndex: null };
 
 		const update = async () => {
 			const next = await client.getStatus();
@@ -82,7 +82,7 @@ export function subscribePrusaLink(
 
 	if (!entry) {
 		const client = new PrusaLinkClient(host, port, username, password);
-		const state: PrinterState = { state: "offline", progress: 0, filename: null, etaSeconds: null, message: "...", nozzleTemp: null, nozzleTarget: null, bedTemp: null, bedTarget: null };
+		const state: PrinterState = { state: "offline", progress: 0, filename: null, etaSeconds: null, message: "...", nozzleTemp: null, nozzleTarget: null, bedTemp: null, bedTarget: null, activeExtruderIndex: null };
 
 		const update = async () => {
 			const next = await client.getStatus();

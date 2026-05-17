@@ -86,8 +86,11 @@ abstract class TempBase extends SingletonAction<TempSettings> {
 @action({ UUID: "com.janoskehl.printer-status.nozzle-temp" })
 export class NozzleTempAction extends TempBase {
 	renderSvg(state: PrinterState): string {
+		const label = state.activeExtruderIndex !== null
+			? `NOZZLE ${state.activeExtruderIndex + 1}`
+			: "NOZZLE";
 		return renderTempSvg({
-			label:      "NOZZLE",
+			label,
 			labelColor: "#FF8A65",
 			current:    state.nozzleTemp,
 			target:     state.nozzleTarget,

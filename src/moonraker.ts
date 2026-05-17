@@ -40,6 +40,8 @@ export interface PrinterState {
 	bedTemp: number | null;
 	/** Bed target temperature in °C (0 = off) */
 	bedTarget: number | null;
+	/** Index of the active extruder (0-3), or null for single-extruder printers */
+	activeExtruderIndex: number | null;
 }
 
 export class MoonrakerClient {
@@ -63,7 +65,11 @@ export class MoonrakerClient {
 							virtual_sdcard: ["progress", "file_position", "is_active"],
 							print_stats: ["state", "filename", "total_duration", "print_duration"],
 							display_status: ["progress", "message"],
-							extruder: ["temperature", "target"],
+							toolhead: ["extruder"],
+							extruder:  ["temperature", "target"],
+							extruder1: ["temperature", "target"],
+							extruder2: ["temperature", "target"],
+							extruder3: ["temperature", "target"],
 							heater_bed: ["temperature", "target"],
 						},
 					}),
@@ -99,16 +105,24 @@ export class MoonrakerClient {
 				etaSeconds = Math.round((elapsed / progress) * (100 - progress));
 			}
 
-			const extruder  = objects.result?.status?.extruder;
-			const heaterBed = objects.result?.status?.heater_bed;
-			const nozzleTemp:   number | null = extruder?.temperature  ?? null;
-			const nozzleTarget: number | null = extruder?.target       ?? null;
-			const bedTemp:      number | null = heaterBed?.temperature ?? null;
-			const bedTarget:    number | null = heaterBed?.target      ?? null;
+			const status = objects.result?.status ?? {};
+			const heaterBed = status.heater_bed;
+			const bedTemp:   number | null = heaterBed?.temperature ?? null;
+			const bedTarget: number | null = heaterBed?.target      ?? null;
+
+			// Multi-extruder: determine active toolhead
+			const activeExtruderName: string = status.toolhead?.extruder ?? "extruder";
+			const hasMultiExtruder = status.extruder1 !== undefined;
+			const activeExtruderIndex: number | null = hasMultiExtruder
+				? (activeExtruderName === "extruder" ? 0 : parseInt(activeExtruderName.replace("extruder", ""), 10))
+				: null;
+			const activeExtruder = status[activeExtruderName] ?? status.extruder;
+			const nozzleTemp:   number | null = activeExtruder?.temperature ?? null;
+			const nozzleTarget: number | null = activeExtruder?.target      ?? null;
 
 			const message = this.formatMessage(state, progress, filename, etaSeconds);
 
-			return { state, progress, filename, etaSeconds, message, nozzleTemp, nozzleTarget, bedTemp, bedTarget };
+			return { state, progress, filename, etaSeconds, message, nozzleTemp, nozzleTarget, bedTemp, bedTarget, activeExtruderIndex };
 		} catch {
 			return {
 				state: "offline",
@@ -120,6 +134,7 @@ export class MoonrakerClient {
 				nozzleTarget: null,
 				bedTemp: null,
 				bedTarget: null,
+				activeExtruderIndex: null,
 			};
 		}
 	}

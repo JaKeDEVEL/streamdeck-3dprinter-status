@@ -54,11 +54,11 @@ export class PrusaLinkClient {
 			const bedTarget:    number | null = data.printer?.target_bed    ?? null;
 
 			const message = formatMessage(state, progress, etaSeconds);
-			return { state, progress, filename, etaSeconds, message, nozzleTemp, nozzleTarget, bedTemp, bedTarget };
+			return { state, progress, filename, etaSeconds, message, nozzleTemp, nozzleTarget, bedTemp, bedTarget, activeExtruderIndex: null };
 		} catch {
 			return {
 				state: "offline", progress: 0, filename: null, etaSeconds: null, message: "Offline",
-				nozzleTemp: null, nozzleTarget: null, bedTemp: null, bedTarget: null,
+				nozzleTemp: null, nozzleTarget: null, bedTemp: null, bedTarget: null, activeExtruderIndex: null,
 			};
 		}
 	}
